@@ -357,10 +357,14 @@ class MongoDBAtlasDocumentStore(BaseDocumentStore):
 
         pipeline = [
             {
-                "$search": {
-                    "index": self.collection_name,
-                    "knnBeta": {"vector": query_emb.tolist(), "path": "embedding", "k": top_k},
+                "$vectorSearch": {
+                    "index": "vector_index",
+                    "queryVector": query_emb.tolist(),
+                    "path": "embedding", 
+                    "numCandidates": 100,
+                    "limit": top_k,
                 }
+
             }
         ]
         if filters is not None:
